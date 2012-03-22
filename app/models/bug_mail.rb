@@ -3,9 +3,9 @@ require 'yaml'
 class BugMail
   def parse_config(file = nil)
     unless file
-      file = "/path/to/config.yml"
+      file = "config/better_imap.yml"
     end
-    config = YAML.load_file('example.yml')
+    config = YAML.load_file(file)
     config
   end
 end
