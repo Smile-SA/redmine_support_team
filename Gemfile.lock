@@ -1,0 +1,28 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    coderay (1.0.5)
+    edavis10-object_daddy (0.4.3)
+    metaclass (0.0.1)
+    mocha (0.10.5)
+      metaclass (~> 0.0.1)
+    mysql (2.8.1)
+    rack (1.1.3)
+    rspec (1.3.2)
+    rspec-rails (1.3.4)
+      rack (>= 1.0.0)
+      rspec (~> 1.3.1)
+    shoulda (2.10.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  coderay (~> 1.0.0)
+  edavis10-object_daddy
+  mocha
+  mysql
+  rack (~> 1.1)
+  rspec (= 1.3.2)
+  rspec-rails (= 1.3.4)
+  shoulda (= 2.10.3)
