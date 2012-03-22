@@ -1,9 +1,13 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe BugMail do
-  # it 'should not be an ActiveRecord class' do
-  #   Budget.should_not be_a_kind_of(ActiveRecord::Base)
-  # end
+  it "should return instance of Hash" do
+    file = 'example.yml'
+    config = BugMail.new.parse_config(file)
+
+    config.should be_an_instance_of Hash
+  end
+
   it "should parse config" do
     file = 'example.yml'
     config = BugMail.new.parse_config(file)
