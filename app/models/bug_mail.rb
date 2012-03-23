@@ -35,7 +35,6 @@ class BugMail
       end
 
       begin
-        imap.examine(c['folder'])
         imap.select(c['folder'])
       # A Net::IMAP::NoResponseError is raised if the mailbox does not exist
       # or is for some reason non-examinable
@@ -45,18 +44,37 @@ class BugMail
         next
       end
 
-      imap.disconnect
-
-      # imap.search(['NOT', 'SEEN']).each do |message_id|
+      imap.search(['NOT', 'SEEN']).each do |message_id|
       #   msg = imap.fetch(message_id,'RFC822')[0].attr['RFC822']
       #   puts "Receiving message #{message_id}"
       #   process(msg)
       #   puts "Message #{message_id} successfully processed"
-      # end
-      # 
+      end
+
       # imap.expunge
 
-
+      imap.disconnect
     end
+  end
+
+#   @tracker = 'Bug'
+
+  def process(message)
+
+  end
+
+  def match(msg, regex, default)
+    if((@allow_override || default == nil) && (msg =~ regex))
+      return $1
+    end
+    return default
+  end
+
+  def line_match(msg, label, default)
+    return match(msg, /^#{label}:[ \t]*(.*)$/, default)
+  end
+
+  def block_match(msg, label, default)
+    return match(msg, /^#{label}:[ \t]*(.*)$/m, default)
   end
 end
