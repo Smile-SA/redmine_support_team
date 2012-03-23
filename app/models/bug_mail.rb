@@ -17,8 +17,13 @@ class BugMail
 
       begin
         imap = Net::IMAP.new(c['host'], c['port'], c['ssl'], nil, false)
-        # TODO: rescue for login incorrect
-        imap.login(c['username'], c['password'])
+
+        begin
+          imap.login(c['username'], c['password'])
+        rescue Net::IMAP::NoResponseError
+          puts "Login or password incorrect"
+        end
+
         begin
           imap.examine(c['folder'])
           imap.select(c['folder'])
