@@ -26,4 +26,22 @@ describe BugMail do
     config['example']['password'].should == 'anotherpassword'
     config['example']['folder'].should == 'BOX'
   end
+
+  it "should parse project name from email" do
+    message = `cat spec/data/email.txt`
+    bug_mail = BugMail.new
+    bug_mail.match(message, /^To:.*?([\w|-]+)@.*$/, nil).should == 'xxxx'
+  end
+
+  it "should parse issue short description from email" do
+    message = `cat spec/data/email.txt`
+    bug_mail = BugMail.new
+    bug_mail.line_match(message, "Issue", nil).should == 'demo111'
+  end
+
+  it "should parse long issue description from email" do
+    message = `cat spec/data/email.txt`
+    bug_mail = BugMail.new
+    bug_mail.block_match(message, "Description", nil).should == "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nSed dictum sapien hendrerit turpis feugiat aliquet. Maecenas porta viverra mi\neget posuere. Cras convallis dictum massa a vulputate. Nunc fringilla, purus\nat fringilla feugiat, lectus nisi elementum dolor, nec luctus justo arcu nec\nerat. Suspendisse nibh elit, condimentum nec tincidunt a, congue a urna. Nulla\nfacilisi. In vel metus sem. Quisque id dolor at quam eleifend ullamcorper.\nMaecenas tortor erat, ultricies eu aliquet quis, viverra vel metus. In hac\nhabitasse platea dictumst. Suspendisse potenti. Phasellus ac tortor lectus.\nNam ut velit id lectus blandit lacinia.\n"
+  end
 end
