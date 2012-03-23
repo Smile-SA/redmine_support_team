@@ -28,24 +28,23 @@ class BugMail
 
       begin
         imap.login(c['username'], c['password'])
-      ensure
-        imap.disconnect
       rescue Net::IMAP::NoResponseError
         puts "Login or password incorrect"
+        imap.disconnect
         next
       end
 
       begin
         imap.examine(c['folder'])
         imap.select(c['folder'])
-      ensure
-        imap.disconnect
       # A Net::IMAP::NoResponseError is raised if the mailbox does not exist
       # or is for some reason non-examinable
       rescue Net::IMAP::NoResponseError
         puts "Can't select folder"
+        imap.disconnect
         next
       end
+
       imap.disconnect
 
       # imap.search(['NOT', 'SEEN']).each do |message_id|
