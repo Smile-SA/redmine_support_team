@@ -1,0 +1,18 @@
+Date: Mon, 1 Feb 2010 14:38:26 +0200
+Message-ID: <fa54e4a91002010438j3c16e78dm38c95c125b3b6e7@mail.gmail.com>
+Subject: =?KOI8-R?B?08DEwQ==?=
+From: Igor Zubkov <igor.zubkov@gmail.com>
+To: Redmine <xxxx@y.com>
+Content-Type: text/plain; charset=KOI8-U
+Content-Transfer-Encoding: base64
+
+Issue: demo111
+Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed dictum sapien hendrerit turpis feugiat aliquet. Maecenas porta viverra mi
+eget posuere. Cras convallis dictum massa a vulputate. Nunc fringilla, purus
+at fringilla feugiat, lectus nisi elementum dolor, nec luctus justo arcu nec
+erat. Suspendisse nibh elit, condimentum nec tincidunt a, congue a urna. Nulla
+facilisi. In vel metus sem. Quisque id dolor at quam eleifend ullamcorper.
+Maecenas tortor erat, ultricies eu aliquet quis, viverra vel metus. In hac
+habitasse platea dictumst. Suspendisse potenti. Phasellus ac tortor lectus.
+Nam ut velit id lectus blandit lacinia.
