@@ -6,4 +6,4 @@ Description goes here
 
 Install +mail+ gem:
 
-gem install mail -v '2.4.4'
++gem install mail -v '2.4.4'+
