@@ -44,4 +44,11 @@ describe BugMail do
     bug_mail = BugMail.new
     bug_mail.block_match(message, "Description", nil).should == "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nSed dictum sapien hendrerit turpis feugiat aliquet. Maecenas porta viverra mi\neget posuere. Cras convallis dictum massa a vulputate. Nunc fringilla, purus\nat fringilla feugiat, lectus nisi elementum dolor, nec luctus justo arcu nec\nerat. Suspendisse nibh elit, condimentum nec tincidunt a, congue a urna. Nulla\nfacilisi. In vel metus sem. Quisque id dolor at quam eleifend ullamcorper.\nMaecenas tortor erat, ultricies eu aliquet quis, viverra vel metus. In hac\nhabitasse platea dictumst. Suspendisse potenti. Phasellus ac tortor lectus.\nNam ut velit id lectus blandit lacinia.\n"
   end
+
+  it "should return project name" do
+    data = `cat spec/data/email.txt`
+    bug_mail = BugMail.new
+    mail = Mail.new(data.to_s)
+    bug_mail.project_name(mail).should == 'xxxx'
+  end
 end
