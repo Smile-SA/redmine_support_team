@@ -1,3 +1,9 @@
 = better_imap
 
 Description goes here
+
+= Dependencies
+
+Install +mail+ gem:
+
+gem install mail -v '2.4.4'
