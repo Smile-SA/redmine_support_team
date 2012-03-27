@@ -47,13 +47,18 @@ class BugMail
       end
 
       imap.search(['NOT', 'SEEN']).each do |message_id|
-      #   data = imap.fetch(message_id,'RFC822')[0].attr['RFC822']
-      #   puts "Receiving message #{message_id}"
-      #   process(data)
-      #   puts "Message #{message_id} successfully processed"
+        data = imap.fetch(message_id,'RFC822')[0].attr['RFC822']
+        puts "Receiving message #{message_id}"
+        begin
+          process(data)
+          puts "Message #{message_id} successfully processed"
+        rescue SystemExit
+          next
+        end
+        puts "Message #{message_id} successfully processed"
       end
 
-      # imap.expunge
+      imap.expunge
 
       imap.disconnect
     end
@@ -79,7 +84,7 @@ class BugMail
     project = Project.find_by_identifier(projectname)
     unless project
       puts "Unable to find project [#{projectname}]"
-      next
+      exit
     end
 
 #     priorities = IssuePriority.all
@@ -92,7 +97,7 @@ class BugMail
 
     unless user
       puts "Unable to find user"
-      next
+      exit
     end
 
 #     puts "Searching for issue [#{@issue}]" if @debug
@@ -100,10 +105,12 @@ class BugMail
 #
 #     if(i == nil)
 
-      prio = @PRIORITY_MAPPING[@priority] || @DEFAULT_PRIORITY
-      st = IssueStatus.find_by_name(@status) || IssueStatus.default
-      t = p.trackers.find_by_name(@tracker) || @DEFAULT_TRACKER
-      c = p.issue_categories.find_by_name(@category)
+      # prio = @PRIORITY_MAPPING[@priority] || @DEFAULT_PRIORITY
+      # st = IssueStatus.find_by_name(@status) || IssueStatus.default
+      # t = p.trackers.find_by_name(@tracker) || @DEFAULT_TRACKER
+      # c = p.issue_categories.find_by_name(@category)
+
+      # TODO: fix body before insert to db (html stuff)
       issue = Issue.create(:priority => priority,
                            :status => status,
                            :tracker => tracker,
@@ -116,7 +123,7 @@ class BugMail
 
       unless issue.save
         puts "Failed to save new issue"
-        next
+        exit
       end
 #     else
 #       puts "Issue exists, adding comment..."
