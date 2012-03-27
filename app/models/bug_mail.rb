@@ -1,5 +1,7 @@
+require 'rubygems'
 require 'yaml'
 require 'net/imap'
+require 'mail'
 
 class BugMail
   def parse_config(file = nil)
@@ -45,9 +47,9 @@ class BugMail
       end
 
       imap.search(['NOT', 'SEEN']).each do |message_id|
-      #   msg = imap.fetch(message_id,'RFC822')[0].attr['RFC822']
+      #   data = imap.fetch(message_id,'RFC822')[0].attr['RFC822']
       #   puts "Receiving message #{message_id}"
-      #   process(msg)
+      #   process(data)
       #   puts "Message #{message_id} successfully processed"
       end
 
@@ -57,24 +59,82 @@ class BugMail
     end
   end
 
-#   @tracker = 'Bug'
+  def process(data)
+    mail = Mail.new(data.to_s)
 
-  def process(message)
+    projectname = project_name(mail)
+    from = mail_from(mail)
+    subject = mail.subject
+    body = mail.body
+    cc_list = mail.cc
 
-  end
+    status = IssueStatus.first
+    tracker = Tracker.first
+    priority = IssuePriority.find(:first, :conditions => { :is_default => true })
+    category = nil
 
-  def match(msg, regex, default)
-    if((@allow_override || default == nil) && (msg =~ regex))
-      return $1
+    # TODO: add iconv support
+    # ic = Iconv.new('UTF-8', 'UTF-8')
+
+    project = Project.find_by_identifier(projectname)
+    unless project
+      puts "Unable to find project [#{projectname}]"
+      next
     end
-    return default
+
+#     priorities = IssuePriority.all
+#     @DEFAULT_PRIORITY = priorities[0]
+#     @DEFAULT_TRACKER = p.trackers.find_by_position(1) || Tracker.find_by_position(1)
+#     @PRIORITY_MAPPING = {}
+#     priorities.each { |prio| @PRIORITY_MAPPING[prio.name] = prio }
+#
+    user = User.find_by_mail(from)
+
+    unless user
+      puts "Unable to find user"
+      next
+    end
+
+#     puts "Searching for issue [#{@issue}]" if @debug
+#     i = Issue.find_by_id(@issue)
+#
+#     if(i == nil)
+
+      prio = @PRIORITY_MAPPING[@priority] || @DEFAULT_PRIORITY
+      st = IssueStatus.find_by_name(@status) || IssueStatus.default
+      t = p.trackers.find_by_name(@tracker) || @DEFAULT_TRACKER
+      c = p.issue_categories.find_by_name(@category)
+      issue = Issue.create(:priority => priority,
+                           :status => status,
+                           :tracker => tracker,
+                           :project => project,
+                           :category => category,
+                           :start_date => Date.today, # TODO: check time zome stuff
+                           :author => user,
+                           :description => body,
+                           :subject => subject) # TODO: iconv stuff
+
+      unless issue.save
+        puts "Failed to save new issue"
+        next
+      end
+#     else
+#       puts "Issue exists, adding comment..."
+#       n = Journal.new(:notes => ic.iconv(@desc),
+#                       :journalized => i,
+#                       :user => u);
+#       if(!n.save)
+#         puts "Failed to add comment"
+#         return false
+#       end
+#     end
   end
 
-  def line_match(msg, label, default)
-    return match(msg, /^#{label}:[ \t]*(.*)$/, default)
+  def project_name(mail)
+    mail.to.first.split('@')[0]
   end
 
-  def block_match(msg, label, default)
-    return match(msg, /^#{label}:[ \t]*(.*)$/m, default)
+  def mail_from(mail)
+    mail.from.first
   end
 end
