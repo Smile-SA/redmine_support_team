@@ -1,5 +1,7 @@
 source 'http://rubygems.org'
 
+gem 'mail'
+
 group :test do
   gem 'rspec', '1.3.2'
   gem 'rspec-rails', '1.3.4'
