@@ -72,6 +72,7 @@ class BugMail
     body = mail.body
     cc_list = mail.cc
 
+    # TODO: recheck this stuff later
     status = IssueStatus.first
     tracker = Tracker.first
     priority = IssuePriority.find(:first, :conditions => { :is_default => true })
@@ -79,7 +80,7 @@ class BugMail
 
     project = Project.find_by_identifier(projectname)
     unless project
-      puts "Unable to find project [#{projectname}]"
+      puts "Unable to find project: #{projectname}"
       exit
     end
 
@@ -92,7 +93,7 @@ class BugMail
     user = User.find_by_mail(from)
 
     unless user
-      puts "Unable to find user"
+      puts "Unable to find user: #{from}"
       exit
     end
 
@@ -106,20 +107,39 @@ class BugMail
       # t = p.trackers.find_by_name(@tracker) || @DEFAULT_TRACKER
       # c = p.issue_categories.find_by_name(@category)
 
-      # TODO: fix body before insert to db (html stuff)
-      issue = Issue.create(:priority => priority,
-                           :status => status,
-                           :tracker => tracker,
-                           :project => project,
-                           :category => category,
-                           :start_date => Date.today, # TODO: check time zome stuff
-                           :author => user,
-                           :description => mail.body.decoded,
-                           :subject => subject)
+      if !mail.multipart?
+        issue = Issue.create(:priority => priority,
+                             :status => status,
+                             :tracker => tracker,
+                             :project => project,
+                             :category => category,
+                             # :start_date => Time.zone.now.to_date, Redmine uses current Date.today
+                             :author => user,
+                             :description => mail.body.decoded,
+                             :subject => subject)
 
-      unless issue.save
-        puts "Failed to save new issue"
-        exit
+        unless issue.save
+          puts "Failed to save new issue"
+          exit
+        end
+      else
+        mail.parts.each do |part|
+          if part.mime_type == 'text/plain'
+            issue = Issue.create(:priority => priority,
+                                 :status => status,
+                                 :tracker => tracker,
+                                 :project => project,
+                                 :category => category,
+                                 # :start_date => Time.zone.now.to_date,
+                                 :author => user,
+                                 :description => part.body.decoded,
+                                 :subject => subject)
+            unless issue.save
+              puts "Failed to save new issue"
+              exit
+            end
+          end
+        end
       end
 #     else
 #       puts "Issue exists, adding comment..."
