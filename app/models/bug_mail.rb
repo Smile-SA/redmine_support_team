@@ -47,11 +47,10 @@ class BugMail
       end
 
       imap.search(['NOT', 'SEEN']).each do |message_id|
-        data = imap.fetch(message_id,'RFC822')[0].attr['RFC822']
+        data = imap.fetch(message_id, 'RFC822')[0].attr['RFC822']
         puts "Receiving message #{message_id}"
         begin
           process(data)
-          puts "Message #{message_id} successfully processed"
         rescue SystemExit
           next
         end
@@ -77,9 +76,6 @@ class BugMail
     tracker = Tracker.first
     priority = IssuePriority.find(:first, :conditions => { :is_default => true })
     category = nil
-
-    # TODO: add iconv support
-    # ic = Iconv.new('UTF-8', 'UTF-8')
 
     project = Project.find_by_identifier(projectname)
     unless project
@@ -118,8 +114,8 @@ class BugMail
                            :category => category,
                            :start_date => Date.today, # TODO: check time zome stuff
                            :author => user,
-                           :description => body,
-                           :subject => subject) # TODO: iconv stuff
+                           :description => mail.body.decoded,
+                           :subject => subject)
 
       unless issue.save
         puts "Failed to save new issue"
