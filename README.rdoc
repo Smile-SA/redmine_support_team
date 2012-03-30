@@ -8,6 +8,19 @@ Install +mail+ gem:
 
 gem install mail -v '2.4.4'
 
+= Install and configure
+
+Put plugin in vendor/plugins in redmine. And create config/better_imap.yml.
+This is yaml config. Example in example.yml. And restart redmine.
+
+= Uninstall
+
+Remove plugin from vendor/plugins and restart redmine.
+
+= Supported redmine versions
+
+Redmine 1.3.2.
+
 = Notes
 
 If you are using MySQL, configure it:
